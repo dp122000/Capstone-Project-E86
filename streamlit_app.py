@@ -250,16 +250,6 @@ with v1:
     st.plotly_chart(bar_fig, width="stretch")
 
 with v2:
-    donut_fig = go.Figure(go.Pie(
-        labels=latest["symbol"], values=latest["market_cap"],
-        hole=0.45,
-    ))
-    donut_fig.update_layout(title="Market Cap Share", template="plotly_white")
-    st.plotly_chart(donut_fig, width="stretch")
-
-v3, v4 = st.columns(2)
-
-with v3:
     change_sorted = latest.sort_values("price_change_pct_24h")
     colors = ["#DC2626" if v < 0 else "#059669" for v in change_sorted["price_change_pct_24h"]]
     change_fig = go.Figure(go.Bar(
@@ -272,20 +262,6 @@ with v3:
     )
     change_fig.add_vline(x=0, line_color="black", line_width=1)
     st.plotly_chart(change_fig, width="stretch")
-
-with v4:
-    scatter_fig = go.Figure(go.Scatter(
-        x=latest["market_cap"], y=latest["total_volume"],
-        mode="markers+text", text=latest["symbol"], textposition="top center",
-        marker=dict(size=12, color="#1D4ED8"),
-    ))
-    scatter_fig.update_layout(
-        title="Volume vs. Market Cap",
-        xaxis_title="Market Cap (log scale)", yaxis_title="24h Volume (log scale)",
-        xaxis_type="log", yaxis_type="log",
-        template="plotly_white",
-    )
-    st.plotly_chart(scatter_fig, width="stretch")
 
 st.divider()
 
