@@ -56,7 +56,7 @@ st.markdown("""
 
 DATA_FILE = "market_telemetry.csv"
 API_URL = "https://api.coingecko.com/api/v3/coins/markets"
-POLL_INTERVAL_SECONDS = 60
+POLL_INTERVAL_SECONDS = 120
 COINS_PER_PAGE = 10
 
 PARAMS = {
@@ -123,6 +123,8 @@ if "ingestion_started" not in st.session_state:
 def load_data():
     if not os.path.exists(DATA_FILE):
         return pd.DataFrame()
+
+    try:
         con = duckdb.connect(database=":memory:")
 
         con.execute(f"""
