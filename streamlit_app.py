@@ -123,8 +123,39 @@ if "ingestion_started" not in st.session_state:
 def load_data():
     if not os.path.exists(DATA_FILE):
         return pd.DataFrame()
-    con = duckdb.connect(database=":memory:")
-    con.execute(f"CREATE OR REPLACE VIEW market AS SELECT * FROM read_csv_auto('{DATA_FILE}')")
+        con = duckdb.connect(database=":memory:")
+
+        con.execute(f"""
+            CREATE OR REPLACE VIEW raw_market AS
+            SELECT * FROM read_csv(
+                '{DATA_FILE}',
+                columns = {{
+                    'utc_timestamp': 'VARCHAR',
+                    'name': 'VARCHAR',
+                    'symbol': 'VARCHAR',
+                    'current_price': 'DOUBLE',
+                    'market_cap': 'DOUBLE',
+                    'total_volume': 'DOUBLE',
+                    'price_change_pct_24h': 'DOUBLE'
+                }},
+                ignore_errors = true,
+                header = true
+            )
+        """)
+
+        con.execute("""
+            CREATE OR REPLACE VIEW market AS
+            SELECT * FROM raw_market
+            WHERE current_price IS NOT NULL
+              AND market_cap IS NOT NULL
+              AND total_volume IS NOT NULL
+              AND price_change_pct_24h IS NOT NULL
+        """)
+
+        row_count = con.execute("SELECT COUNT(*) FROM market").fetchone()[0]
+        if row_count == 0:
+            con.close()
+            return pd.DataFrame()
 
     latest = con.execute("""
         SELECT * FROM market
