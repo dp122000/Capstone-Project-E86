@@ -25,7 +25,7 @@ import plotly.graph_objects as go
 
 # PAGE CONFIG + CUSTOM CSS  (styling requirement from Week 4)
 
-st.set_page_config(page_title="Real-Time Predictive Market Dashboard", layout="wide")
+st.set_page_config(page_title="Live Crypto Market Dashboard", layout="wide")
 
 st.markdown("""
     <style>
