@@ -197,7 +197,7 @@ def load_data():
 
 data = load_data()
 
-st.title("Real-Time Predictive Market Dashboard")
+st.title("Live Crypto Market Dashboard")
 st.caption("Live crypto market data, ingested continuously and queried in-memory with DuckDB.")
 
 if not data or data["history"].empty:
